@@ -1,6 +1,6 @@
 require 'test_helper'
  
-class StrategyTest < Test::Unit::TestCase
+class StrategiesTest < Test::Unit::TestCase
 
   def setup
     @c = Cohabit::Configuration.new
@@ -60,7 +60,33 @@ class StrategyTest < Test::Unit::TestCase
       end
     end
     assert_equal(true, @c.strategies.first.settings[:scope_validations])
+  end
 
+  def test_strategy_inherits_and_overrides_modified_global_settings
+    # should inherit monkey business
+    @c.load do
+      set :tenant_association, "monkey business"
+      strategy :benjamin
+    end
+    assert_equal("monkey business", @c.strategies.first.settings[:tenant_association])
+
+    # should override global setting monkey business with peanuts!
+    setup
+    @c.load do
+      set :tenant_association, "monkey business"
+      strategy :benjamin, tenant_association: :peanuts
+    end
+    assert_equal(:peanuts, @c.strategies.first.settings[:tenant_association])
+
+    # and in block mode for good measure.
+    setup
+    @c.load do
+      set :tenant_association, "monkey business"
+      strategy :benjamin do
+        set :tenant_association, :salted
+      end
+    end
+    assert_equal(:salted, @c.strategies.first.settings[:tenant_association])
   end
 
 end

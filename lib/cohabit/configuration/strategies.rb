@@ -1,13 +1,14 @@
 module Cohabit
   class Configuration
     module Strategies
+
       def self.included(base)
-        base.send :alias_method, :initialize_without_strategy, :initialize
-        base.send :alias_method, :initialize, :initialize_with_strategy
+        base.send :alias_method, :initialize_without_strategies, :initialize
+        base.send :alias_method, :initialize, :initialize_with_strategies
       end
 
-      def initialize_with_strategy(*args)
-        initialize_without_strategy(*args)
+      def initialize_with_strategies(*args)
+        initialize_without_strategies(*args)
         @strategies = []
       end
 
@@ -16,8 +17,15 @@ module Cohabit
 
       # defines a strategy. woah there batman!
       def strategy(*args, &block)
+        generate_settings_hash!(args)
         strategy = Strategy.new(*args, &block)
         add_strategy(strategy)
+      end
+
+      def find_strategy_by_name(name)
+        strategy = @strategies.find{|s| s.name == name}
+        return strategy if strategy
+        raise StrategyNotFoundError
       end
 
       private

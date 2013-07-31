@@ -18,7 +18,7 @@ module Cohabit
       elsif options[:file]
         load string: File.read(options[:file])
       elsif options[:string]
-        instance_eval(string)
+        instance_eval(options[:string])
       end
     end
 

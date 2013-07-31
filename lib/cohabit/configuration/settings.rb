@@ -2,7 +2,11 @@ module Cohabit
   class Configuration
     module Settings
 
-      DEFULT_SETTINGZ = {scope_validations: false, scope_url_helpers: false}
+      DEFULT_SETTINGZ = {
+        scope_validations: false,
+        scope_url_helpers: false,
+        tenant_association: 'tenant'
+      }
 
       def self.included(base)
         base.send :alias_method, :initialize_without_settings, :initialize
@@ -20,6 +24,14 @@ module Cohabit
       def merge_settings!(settings)
         settings.delete_if{ |s| !DEFULT_SETTINGZ.include?(s) }
         @settings.merge!(settings)
+      end
+
+      def generate_settings_hash!(args)
+        if args.last.is_a?(Hash)
+          args[args.length-1] = @settings.merge(args.last)
+        else
+          args << @settings.dup
+        end
       end
 
       def set(setting, value)
