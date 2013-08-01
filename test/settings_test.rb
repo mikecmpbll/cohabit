@@ -1,5 +1,3 @@
-require 'test_helper'
- 
 class SettingsTest < Test::Unit::TestCase
 
   def setup

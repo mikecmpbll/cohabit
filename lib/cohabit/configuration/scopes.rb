@@ -21,7 +21,7 @@ module Cohabit
         add_scope(scope)
       end
 
-      def apply_all!
+      def apply_scopes!
         @scopes.each{ |s| s.apply! }
       end
 

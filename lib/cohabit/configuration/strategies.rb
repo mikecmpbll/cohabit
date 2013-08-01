@@ -17,7 +17,6 @@ module Cohabit
 
       # defines a strategy. woah there batman!
       def strategy(*args, &block)
-        generate_settings_hash!(args)
         strategy = Strategy.new(*args, &block)
         add_strategy(strategy)
       end

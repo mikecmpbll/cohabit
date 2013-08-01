@@ -5,8 +5,6 @@ require "active_support/inflector"
 module Cohabit
   class Scope
 
-    attr_accessor :_config
-
     def initialize(*args, &block)
       merge_settings!(args.pop) if args.last.is_a?(Hash)
       apply_to(args[0])
@@ -20,6 +18,8 @@ module Cohabit
 
     include Configuration::Settings
 
+    attr_reader :strategy
+
     def use_strategy(strategy)
       unless strategy.nil?
         @strategy = strategy
@@ -32,6 +32,19 @@ module Cohabit
 
     def apply!
       # SMASH IT INTO THE AR MODEL
+      # oh yeah, this is the magic, baby.
+      # mind-bending magic. (aka messy as shit)
+      @models.each do |model|
+        model.instance_eval do
+          def _cohabit_scope(_scope)
+            proc = _scope.strategy.model_code
+            instance_exec(_scope, &proc) if proc
+          end
+        end
+        # call it with this scope instance so it
+        # can access settings and shiz.
+        model._cohabit_scope(self)
+      end
     end
 
     private
