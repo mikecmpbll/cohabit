@@ -31,19 +31,9 @@ module Cohabit
     end
 
     def apply!
-      # SMASH IT INTO THE AR MODEL
-      # oh yeah, this is the magic, baby.
-      # mind-bending magic. (aka messy as shit)
+      # apply yourself, that's what my teachers always said.
       @models.each do |model|
-        model.instance_eval do
-          def _cohabit_scope(_scope)
-            proc = _scope.strategy.model_code
-            instance_exec(_scope, &proc) if proc
-          end
-        end
-        # call it with this scope instance so it
-        # can access settings and shiz.
-        model._cohabit_scope(self)
+        model._apply_cohabit_scope(self)
       end
     end
 

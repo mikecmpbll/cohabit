@@ -5,7 +5,7 @@ module Cohabit
       DEFULT_SETTINGZ = {
         scope_validations: false,
         scope_url_helpers: false,
-        tenant_association: :tenant
+        association: :tenant
       }
 
       def self.included(base)

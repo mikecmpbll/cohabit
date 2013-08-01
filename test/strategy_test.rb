@@ -17,16 +17,23 @@
   end
 
   def test_basic_strategy
-    c = Client.create(name: "fubar")
-    Cohabit.current_tenant = c
     @c.load do
       require 'basic'
-      scope :ybur, :basic, tenant_association: :client
+      scope :ybur, :basic, association: :client
     end
     @c.apply_scopes!
-    # raise Ybur._validators.inspect
+
+    # test before_validation to add scope association
+    c = Client.create(name: "fubar")
+    Cohabit.current_tenant = c
     y = Ybur.create(joke: "I took my tomcats to get neutered today. No hard felines")
     assert_same(c, y.client)
+
+    # test default_scope
+    c2 = Client.create(name: "rabuf")
+    Cohabit.current_tenant = c2
+    y2 = Ybur.create(joke: "I just ordered 10,000 bottles of TippEx. I made a massive mistake.")
+    assert_equal(1, Ybur.count)
   end
 
 end

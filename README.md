@@ -15,8 +15,8 @@ It adds:
 
 Still a WIP. Need to:
 
-- Add scope definitions to ActiveRecord instead? Avoids duplication of scopes in each model. Then call the scope on the model..
-- Develop snippets, i.e. scope_validations snippet (and remove that setting)
+- Develop snippets to be included in strategies, i.e. scope_validations snippet (and remove that setting)
+- Should snippets just be nested strategies? wah, probably.
 - Work out how to integrate the url helper scopes as an option
 - Write the rake tasks
 

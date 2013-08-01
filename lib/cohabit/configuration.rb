@@ -2,6 +2,7 @@ require "cohabit/version"
 require "cohabit/configuration/settings"
 require "cohabit/configuration/strategies"
 require "cohabit/configuration/scopes"
+require "active_record"
 
 module Cohabit
   class Configuration

@@ -20,7 +20,7 @@ class ScopesTest < Test::Unit::TestCase
     # load basic strategy
     @c.load do
       require 'basic'
-      scope :ybur, :basic, tenant_association: :client
+      scope :ybur, :basic, association: :client
     end
     assert(@c.scopes.any?)
   end
@@ -28,9 +28,9 @@ class ScopesTest < Test::Unit::TestCase
   def test_settings_for_scope
     @c.load do
       require 'basic'
-      scope :ybur, :basic, tenant_association: :client
+      scope :ybur, :basic, association: :client
     end
-    assert_equal(:client, @c.scopes.first.settings[:tenant_association])
+    assert_equal(:client, @c.scopes.first.settings[:association])
   end 
 
   def test_apply_scope_to_model
@@ -49,7 +49,7 @@ class ScopesTest < Test::Unit::TestCase
     Cohabit.current_tenant = c
     @c.load do
       require 'basic'
-      scope :ybur, :basic, tenant_association: :client
+      scope :ybur, :basic, association: :client
     end
     @c.apply_scopes!
     assert_match(/client_id/, Ybur.scoped.to_sql)
