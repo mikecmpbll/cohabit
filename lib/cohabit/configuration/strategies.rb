@@ -30,11 +30,11 @@ module Cohabit
       private
         def add_strategy(strategy)
           raise StrategyNameExistsError if named_strategy_exists?(strategy.name)
-          @strategies << strategy
+          strategies << strategy
         end
 
         def named_strategy_exists?(strategy_name)
-          @strategies.any?{|s| s.name == strategy_name}
+          strategies.any?{|s| s.name == strategy_name}
         end
 
     end

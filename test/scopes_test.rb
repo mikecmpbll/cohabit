@@ -11,18 +11,16 @@
 
   def test_add_valid_scope
     # load basic strategy
-    strategy_file = File.expand_path(File.join(File.dirname(__FILE__), "../lib/cohabit/strategies/basic.rb"))
-    @c.load file: strategy_file
     @c.load do
+      require 'basic'
       scope :ybur, :basic, tenant_association: :client
     end
     assert(@c.scopes.any?)
   end
 
   def test_settings_for_scope
-    strategy_file = File.expand_path(File.join(File.dirname(__FILE__), "../lib/cohabit/strategies/basic.rb"))
-    @c.load file: strategy_file
     @c.load do
+      require 'basic'
       scope :ybur, :basic, tenant_association: :client
     end
     assert_equal(:client, @c.scopes.first.settings[:tenant_association])
@@ -31,9 +29,8 @@
   def test_apply_scope_to_model
     c = Client.create(name: "fubar")
     Cohabit.current_tenant = c
-    strategy_file = File.expand_path(File.join(File.dirname(__FILE__), "../lib/cohabit/strategies/basic.rb"))
-    @c.load file: strategy_file
     @c.load do
+      require 'basic'
       scope :ybur, :basic
     end
     @c.apply_scopes!
@@ -43,9 +40,8 @@
   def test_setting_association_name
     c = Client.create(name: "fubar")
     Cohabit.current_tenant = c
-    strategy_file = File.expand_path(File.join(File.dirname(__FILE__), "../lib/cohabit/strategies/basic.rb"))
-    @c.load file: strategy_file
     @c.load do
+      require 'basic'
       scope :ybur, :basic, tenant_association: :client
     end
     @c.apply_scopes!

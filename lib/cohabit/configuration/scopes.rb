@@ -27,7 +27,7 @@ module Cohabit
 
       private
         def add_scope(scope)
-          @scopes << scope
+          scopes << scope
         end
 
     end

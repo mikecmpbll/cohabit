@@ -5,8 +5,11 @@ require "cohabit/configuration/scopes"
 
 module Cohabit
   class Configuration
+
+    attr_reader :load_paths
+
     def initialize(config_file = nil)
-      # @load_paths = [".", File.expand_path(File.join(File.dirname(__FILE__), "../recipes"))]
+      @load_paths = [".", File.expand_path(File.join(File.dirname(__FILE__), "strategies"))]
     end
 
     def load(*args, &block)
@@ -22,6 +25,21 @@ module Cohabit
       end
     end
 
+    # simple require to pull in config files, eg 'basic'
+    def require(files)
+      [files].flatten.each do |file|
+        load_paths.each do |path|
+          if file.match(/\.rb\z/)
+            name = File.join(path, file)
+          else
+            name = File.join(path, "#{file}.rb")
+          end
+          load(file: name) if File.file?(name)
+        end
+      end
+    end
+
     include Settings, Strategies, Scopes
+
   end
 end
