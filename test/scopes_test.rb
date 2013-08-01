@@ -1,12 +1,19 @@
- class ScopesTest < Test::Unit::TestCase
+class ScopesTest < Test::Unit::TestCase
 
   def setup
     @c = Cohabit::Configuration.new
   end
 
   def teardown
-    Client.unscoped.delete_all
-    Ybur.unscoped.delete_all
+    Ybur.default_scopes.clear
+    Ybur._validators.clear
+    [:validate, :validation, :save, :create, :update, :destroy].each do |type|
+      Ybur.reset_callbacks(type)
+    end
+    Ybur.reflections.clear
+
+    Client.delete_all
+    Ybur.delete_all
   end
 
   def test_add_valid_scope

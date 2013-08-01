@@ -8,7 +8,17 @@ It adds:
 - Custom scoping strategies
 - Scope validations
 - Scope URL helpers
-- Rake tasks for importing single-tenanted databases into a multi-tenant one
+- Rake task for importing single-tenanted databases into a multi-tenant one
+- Rake task for generating multi-tenanted scoped schema
+
+## Todo
+
+Still a WIP. Need to:
+
+- Add scope definitions to ActiveRecord instead? Avoids duplication of scopes in each model. Then call the scope on the model..
+- Develop snippets, i.e. scope_validations snippet (and remove that setting)
+- Work out how to integrate the url helper scopes as an option
+- Write the rake tasks
 
 ## Installation
 
