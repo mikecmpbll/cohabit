@@ -78,6 +78,28 @@ This part is a WIP, but you can define your own strategies to be used. The follo
       end
     end
 
+### Settings
+
+Once I've implemented it, you'll be able to scope URL helpers, so for example if your tenant features in your URL like so:
+
+    # routes file
+    # ...
+    resources :tenants do
+      resources :posts
+      resources :foo
+      resources :bar
+    end
+    # ...
+
+Giving you the paths `/tenant/1/posts/1` .. etc. You will be able to still call `posts_path(@post)`, and when the setting is enabled it will expand that internally to `tenants_posts_path(@post.tenant, @post)`.
+
+### Rake tasks
+
+There are two rake tasks in the pipeline to make life a bit easier for anyone converting from multi-database architecture to a multi-tenant, single-database architecture:
+
+1. Migrate DB or create new DB schema based on the scopes in a cohabit configuration file
+2. Import a number of single-tenanted databases into the multi-tenanted equivellent
+
 ## Todo
 
 Still a WIP. Need to:
