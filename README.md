@@ -47,6 +47,32 @@ Or you can specify options and other configuration settings in block form:
       set :association, :organisation
     end
 
+In your application, depending on how you determine the current tenant, you need to set `Cohabit.current_tenant`. If you're using subdomains, I would recommend writing some simple Rack middleware something like:
+
+    class TenantSetup
+      def initialize(app)
+        @app = app
+      end
+
+      def call(env)
+        @request = Rack::Request.new(env)
+        Cohabit.current_tenant = Tenant.find_by_subdomain!(get_subdomain)
+        @app.call(env)
+      end
+
+      private
+        def get_subdomain
+          # Check request host isn't an IP.
+          host = @request.host
+          return nil unless !(host.nil? || /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.match(host))
+          subdomain = host.split('.')[0..-3].first
+          return subdomain unless subdomain == "www"
+          return host.split('.')[0..-3][1]
+        end
+    end
+
+Alternatively, write a `before_filter` in the `ApplicationController`.
+
 ### Strategies
 
 This part is a WIP, but you can define your own strategies to be used. The following is the :basic strategy that comes by default:
@@ -98,7 +124,7 @@ Giving you the paths `/tenant/1/posts/1` .. etc. You will be able to still call 
 There are two rake tasks in the pipeline to make life a bit easier for anyone converting from multi-database architecture to a multi-tenant, single-database architecture:
 
 1. Migrate DB or create new DB schema based on the scopes in a cohabit configuration file
-2. Import a number of single-tenanted databases into the multi-tenanted equivellent
+2. Import a number of single-tenanted databases into the multi-tenanted equivalent
 
 ## Todo
 
