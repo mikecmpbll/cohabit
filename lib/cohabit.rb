@@ -18,20 +18,20 @@ end
 
 ActiveRecord::Base.extend Cohabit::ActiveRecordExtensions
 
-# if defined? Rails
-#   if Rails::VERSION::MAJOR.to_i >= 3
-#     module Cohabit
-#       class Railtie < Rails::Railtie
-#         initializer "cohabit.configure" do |app|
-#           config = Cohabit::Configuration.new
-#           config.load(file: File.join(Rails.root, "config/cohabit.rb"))
-#           config.apply_scopes!
-#         end
-#       end
-#     end
-#   else
-#     config = Cohabit::Configuration.new
-#     config.load(file: File.join(Rails.root, "config/cohabit.rb"))
-#     config.apply_scopes!
-#   end
-# end
+if defined? Rails
+  if Rails::VERSION::MAJOR.to_i >= 3
+    module Cohabit
+      class Railtie < Rails::Railtie
+        initializer "cohabit.configure" do |app|
+          config = Cohabit::Configuration.new
+          config.load(file: File.join(Rails.root, "config/cohabit.rb"))
+          config.apply_scopes!
+        end
+      end
+    end
+  else
+    config = Cohabit::Configuration.new
+    config.load(file: File.join(Rails.root, "config/cohabit.rb"))
+    config.apply_scopes!
+  end
+end
