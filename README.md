@@ -38,7 +38,7 @@ By default it assumes your tenant model is called tenant, if you wish to change 
 
 Or per scope with options:
 
-   scope [:foo, :bar], :basic, association: :organisation
+    scope [:foo, :bar], :basic, association: :organisation
 
 Or you can specify options and other configuration settings in block form:
 
@@ -88,7 +88,6 @@ Still a WIP. Need to:
 - Write the rake tasks
 - Provide simple interface to add custom globals (extending on Cohabit.current_tenant)
 - Write more default strategies
-- 
 
 ## Contributing
 
