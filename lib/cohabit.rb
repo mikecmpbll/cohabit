@@ -4,8 +4,14 @@ require 'cohabit/strategy'
 require 'cohabit/scope'
 
 module Cohabit
+  @data = {}
   class << self
     attr_accessor :current_tenant
+
+    def add_global(name)
+      singleton_class.send(:define_method, name) { @data[name] }
+      singleton_class.send(:define_method, "#{name}=") { |val| @data[name] = val }
+    end
   end
 
   module ActiveRecordExtensions

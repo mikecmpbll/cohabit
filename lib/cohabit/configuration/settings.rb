@@ -8,6 +8,8 @@ module Cohabit
         association: :tenant
       }
 
+      CUSTOM_HANDLERS = [:globals]
+
       def self.included(base)
         base.send :alias_method, :initialize_without_settings, :initialize
         base.send :alias_method, :initialize, :initialize_with_settings
@@ -35,10 +37,20 @@ module Cohabit
       end
 
       def set(setting, value)
-        if !DEFULT_SETTINGZ.include?(setting.to_sym)
+        setting = setting.to_sym
+        if CUSTOM_HANDLERS.include?(setting)
+          send("set_#{setting}", value) and return
+        end
+        if !DEFULT_SETTINGZ.include?(setting)
           raise ArgumentError, "what the fuck are you doing.. that's not a setting"
         end
-        @settings[setting.to_sym] = value
+        @settings[setting] = value
+      end
+
+      def set_globals(value)
+        [value].flatten.each do |v|
+          Cohabit.add_global(v) unless Cohabit.respond_to?(v)
+        end
       end
 
     end
