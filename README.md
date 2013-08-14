@@ -123,12 +123,12 @@ You can define additional global vars in the Cohabit namespace, in your strategi
 
 You can also nest strategies to DRY up your code a bit.
 
-  strategy :basic_tweaked do
-    include_strategy :basic
-    model_eval do |_scope|
-      # ...
+    strategy :basic_tweaked do
+      include_strategy :basic
+      model_eval do |_scope|
+        # ...
+      end
     end
-  end
 
 ### Settings
 
