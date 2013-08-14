@@ -2,10 +2,9 @@ module Cohabit
   class Configuration
     module Settings
 
-      DEFULT_SETTINGZ = {
-        scope_validations: false,
-        scope_url_helpers: false,
-        association: :tenant
+      DEFAULT_SETTINGS = {
+        association: :tenant,
+        association_as: :tenant
       }
 
       CUSTOM_HANDLERS = [:globals]
@@ -19,12 +18,12 @@ module Cohabit
       attr_reader :settings
 
       def initialize_with_settings(*args, &block)
-        @settings = DEFULT_SETTINGZ.dup
+        @settings = DEFAULT_SETTINGS.dup
         initialize_without_settings(*args, &block)
       end
 
       def merge_settings!(settings)
-        settings.delete_if{ |s| !DEFULT_SETTINGZ.include?(s) }
+        settings.delete_if{ |s| !DEFAULT_SETTINGS.include?(s) }
         @settings.merge!(settings)
       end
 
@@ -40,9 +39,6 @@ module Cohabit
         setting = setting.to_sym
         if CUSTOM_HANDLERS.include?(setting)
           send("set_#{setting}", value) and return
-        end
-        if !DEFULT_SETTINGZ.include?(setting)
-          raise ArgumentError, "what the fuck are you doing.. that's not a setting"
         end
         @settings[setting] = value
       end

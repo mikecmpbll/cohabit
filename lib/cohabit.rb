@@ -2,6 +2,7 @@ require 'cohabit/errors'
 require 'cohabit/configuration'
 require 'cohabit/strategy'
 require 'cohabit/scope'
+require 'cohabit/route_helper_scope'
 
 module Cohabit
   @data = {}
@@ -13,31 +14,18 @@ module Cohabit
       singleton_class.send(:define_method, "#{name}=") { |val| @data[name] = val }
     end
   end
-
-  module ActiveRecordExtensions
-    def _apply_cohabit_scope(_scope)
-      proc = _scope.strategy.model_code
-      instance_exec(_scope, &proc) if proc
-    end
-  end
 end
 
-ActiveRecord::Base.extend Cohabit::ActiveRecordExtensions
-
-if defined? Rails
-  if Rails::VERSION::MAJOR.to_i >= 3
-    module Cohabit
-      class Railtie < Rails::Railtie
-        initializer "cohabit.configure" do |app|
+if defined?(Rails) && Rails::VERSION::MAJOR.to_i >= 3
+  module Cohabit
+    class Railtie < Rails::Railtie
+      initializer "cohabit.initialize_scopes" do
+        ActiveSupport.on_load :after_initialize do
           config = Cohabit::Configuration.new
           config.load(file: File.join(Rails.root, "config/cohabit.rb"))
-          config.apply_scopes!
+          config.apply_all!
         end
       end
     end
-  else
-    config = Cohabit::Configuration.new
-    config.load(file: File.join(Rails.root, "config/cohabit.rb"))
-    config.apply_scopes!
   end
 end

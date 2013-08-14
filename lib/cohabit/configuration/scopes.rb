@@ -16,13 +16,13 @@ module Cohabit
       attr_reader :scopes
 
       def scope(*args, &block)
-        args[1] &&= find_strategy_by_name(args[1])
+        generate_settings_hash!(args)
         scope = Scope.new(*args, &block)
         add_scope(scope)
       end
 
-      def apply_scopes!
-        @scopes.each{ |s| s.apply! }
+      def apply_scopes!(context = self)
+        @scopes.each{ |s| s.apply!(context) }
       end
 
       private

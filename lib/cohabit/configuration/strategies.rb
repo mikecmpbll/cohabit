@@ -29,7 +29,7 @@ module Cohabit
 
       private
         def add_strategy(strategy)
-          raise StrategyNameExistsError if named_strategy_exists?(strategy.name)
+          raise StrategyNameExistsError, strategy.name if named_strategy_exists?(strategy.name)
           strategies << strategy
         end
 

@@ -10,7 +10,6 @@ module Cohabit
       apply_to(args[0])
       use_strategy(args[1])
       instance_eval(&block) unless block.nil?
-      merge_settings!(@strategy.settings)
       unless valid?
         raise InvalidScopeError, "provide valid model(s) and strategy"
       end
@@ -22,7 +21,7 @@ module Cohabit
 
     def use_strategy(strategy)
       unless strategy.nil?
-        @strategy = strategy
+        @strategy_name = strategy
       end
     end
 
@@ -30,17 +29,22 @@ module Cohabit
       @models = parse_models(models)
     end
 
-    def apply!
-      # apply yourself, that's what my teachers always said.
+    def apply!(context)
+      # apply yourself! that's what my teachers always said.
+      strategy_stack = get_strategies(@strategy_name, [], context)
+      main_strategy = context.find_strategy_by_name(@strategy_name)
+      merge_settings!(main_strategy.settings)
       @models.each do |model|
-        model._apply_cohabit_scope(self)
+        strategy_stack.each do |strategy|
+          model.instance_exec(self, &strategy.model_code)
+        end
       end
     end
 
     private
       def valid?
         return false if @models.empty?
-        return false if @strategy.nil?
+        return false if @strategy_name.nil?
         @models.each do |model|
           return false if !ActiveRecord::Base.descendants.include?(model)
         end
@@ -51,6 +55,21 @@ module Cohabit
         [models].flatten.compact.map do |model|
           model.to_s.classify.constantize
         end
+      end
+
+      def get_strategies(strategy_name, strategy_stack, context)
+        strategy = context.find_strategy_by_name(strategy_name)
+        strategy.strategies.each do |s|
+          if s == strategy.name
+            if strategy_stack.include?(strategy)
+              raise StrategyNestingError, "strategies can't be nested twice in the same stack"
+            end
+            strategy_stack << strategy
+          else
+            strategy_stack = get_strategies(s, strategy_stack, context)
+          end
+        end
+        strategy_stack
       end
 
   end

@@ -2,7 +2,9 @@ require "cohabit/version"
 require "cohabit/configuration/settings"
 require "cohabit/configuration/strategies"
 require "cohabit/configuration/scopes"
+require "cohabit/configuration/route_helper_scopes"
 require "active_record"
+require "active_support/inflector"
 
 module Cohabit
   class Configuration
@@ -40,7 +42,16 @@ module Cohabit
       end
     end
 
-    include Settings, Strategies, Scopes
+    def apply_all!
+      self.class.ancestors.take_while{|a| a != self.class.superclass}
+      .reject{|a| a == self.class}
+      .each do |a|
+        method = "apply_#{a.name.demodulize.underscore}!"
+        self.send(method, self) if self.respond_to?(method)
+      end
+    end
+
+    include Settings, Strategies, Scopes, RouteHelperScopes
 
   end
 end

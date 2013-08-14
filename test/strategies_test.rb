@@ -37,7 +37,6 @@ class StrategiesTest < Test::Unit::TestCase
     # strategy block defaults > strategy arg defaults
 
     # should take on strategy default settings when passed in
-    setup
     @c.load do
       strategy :frankel, { scope_validations: true }
     end
@@ -53,5 +52,15 @@ class StrategiesTest < Test::Unit::TestCase
     end
     assert_equal(true, @c.strategies.first.settings[:scope_validations])
   end
+
+  def test_nested_strategy
+    @c.load do
+      strategy :jim
+      strategy :frankel, { association: :client } do
+        include_strategy :jim
+      end
+    end
+    assert_equal([:jim], @c.find_strategy_by_name(:frankel).strategies)
+  end 
 
 end

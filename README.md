@@ -2,7 +2,9 @@
 
 Cohabit adds comprehensive scoped multi-tenancy functionality to any application, simply set your options up in `config/cohabit.rb` using the DSL (inspired by capistrano).
 
-It adds:
+This gem isn't really recommended for doing simple application wide scoping, for that I'd recommend https://github.com/wireframe/multitenant. Cohabit builds on what `multitenant` provides and allows you to define your own scoping strategies with the DSL for where more complexity is needed.
+
+It provides (or it will):
 
 - Model scoping (duh)
 - Custom scoping strategies
@@ -28,7 +30,9 @@ Or install it yourself as:
 ## Usage
 
 In its simplest form, using the basic scope (typical `belongs_to` assiciation scope):
-
+    
+    # must have this line to use the included scopes
+    require 'basic'
     scope [:foo, :bar], :basic
 
 By default it assumes your tenant model is called tenant, if you wish to change this you can set it globally:
@@ -104,6 +108,28 @@ This part is a WIP, but you can define your own strategies to be used. The follo
       end
     end
 
+You can define additional global vars in the Cohabit namespace, in your strategies, e.g.:
+
+    strategy :test do
+      set :globals, [:current_view, :current_scope]
+      # ...
+    end
+
+    # application_controller.rb
+    before_filter :set_scope
+    def set_scope
+      Cohabit.current_scope = Cohabit.current_tenant.managed_clients
+    end
+
+You can also nest strategies to DRY up your code a bit.
+
+  strategy :basic_tweaked do
+    include_strategy :basic
+    model_eval do |_scope|
+      # ...
+    end
+  end
+
 ### Settings
 
 Once I've implemented it, you'll be able to scope URL helpers, so for example if your tenant features in your URL like so:
@@ -130,12 +156,10 @@ There are two rake tasks in the pipeline to make life a bit easier for anyone co
 
 Still a WIP. Need to:
 
-- Develop snippets to be included in strategies, i.e. scope_validations snippet (and remove that setting)
-- Should snippets just be nested strategies? wah, probably.
 - Work out how to integrate the url helper scopes as an option
 - Write the rake tasks
-- Provide simple interface to add custom globals (extending on Cohabit.current_tenant)
-- Write more default strategies
+- Add custom `cohabit_unscoped` (or similar) class method to models which removes all Cohabit `default_scope`s, `before_create`s, validation scopes, etc for that chain. (Possible? hmf)
+- Add a `conditions` option to `include_strategy`, like that of Rails routes perhaps
 
 ## Contributing
 
