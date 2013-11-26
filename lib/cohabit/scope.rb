@@ -31,7 +31,7 @@ module Cohabit
 
     def apply!(context)
       # apply yourself! that's what my teachers always said.
-      strategy_stack = get_strategies(@strategy_name, [], context)
+      strategy_stack = get_strategies(@strategy_name, context)
       main_strategy = context.find_strategy_by_name(@strategy_name)
       merge_settings!(main_strategy.settings)
       @models.each do |model|
@@ -57,7 +57,7 @@ module Cohabit
         end
       end
 
-      def get_strategies(strategy_name, strategy_stack, context)
+      def get_strategies(strategy_name, context, strategy_stack = [])
         strategy = context.find_strategy_by_name(strategy_name)
         strategy.strategies.each do |s|
           if s == strategy.name
@@ -66,7 +66,7 @@ module Cohabit
             end
             strategy_stack << strategy
           else
-            strategy_stack = get_strategies(s, strategy_stack, context)
+            strategy_stack = get_strategies(s, context, strategy_stack)
           end
         end
         strategy_stack

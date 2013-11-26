@@ -12,7 +12,7 @@ module Cohabit
     attr_reader :load_paths
 
     def initialize(config_file = nil)
-      @load_paths = [".", File.expand_path(File.join(File.dirname(__FILE__), "strategies"))]
+      @load_paths = [Rails.root.join("lib"), Rails.root.join("config"), ".", File.expand_path(File.join(File.dirname(__FILE__), "strategies"))]
     end
 
     def load(*args, &block)
